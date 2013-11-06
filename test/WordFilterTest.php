@@ -57,4 +57,20 @@ class WordFilterTest extends PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    public function test_addNgWordメソッドを使ってNGワードを複数登録できる()
+    {
+        $filter = new WordFilter('Arsenal');
+        $filter->addNgWord('ManU');
+
+        $this->assertTrue(
+            $filter->detect('t_wada: 昨日のArsenal vs Celsea 熱かった!') && $filter->detect('t_wada: ManU vs Liverpool はそうでもなかった'),
+            'ArsenalとManUの文字をfilterできているか'
+        );
+        $this->assertSame(
+            't_wada: 昨日の<censored> vs <censored> 熱かった!',
+            $filter->censor('t_wada: 昨日のArsenal vs ManU 熱かった!'),
+            'ArsenalのとManUの文字を置換できているか'
+        );
+    }
 }

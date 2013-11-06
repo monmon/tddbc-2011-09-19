@@ -10,17 +10,27 @@ class WordFilter
         $this->_ngWords[] = $ngWord;
     }
 
+    public function addNgWord($ngWord)
+    {
+        $this->_ngWords[] = $ngWord;
+    }
+
+    /**
+     * 複数登録されたngWordのうち、1つでもあればtrue、1つもなければfalse
+     */
     public function detect($text)
     {
         if (empty($this->_ngWords)) {
             return false;
         }
 
-        if (strpos($text, $this->_ngWords[0]) === false) {
-            return false;
+        foreach ($this->_ngWords as $ngWord) {
+            if (strpos($text, $ngWord) !== false) {
+                return true;
+            }
         }
 
-        return true;
+        return false;
     }
 
     public function censor($text)
@@ -29,6 +39,7 @@ class WordFilter
             return $text;
         }
 
-        return str_replace($this->_ngWords[0], self::REPLACE_STRING, $text);
+        $joinedNgWords = implode('|', $this->_ngWords);
+        return implode(self::REPLACE_STRING, preg_split("/$joinedNgWords/", $text));
     }
 }
