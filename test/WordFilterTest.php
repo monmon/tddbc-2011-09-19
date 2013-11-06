@@ -83,4 +83,16 @@ class WordFilterTest extends PHPUnit_Framework_TestCase
             '特殊文字が入っていても正しく機能するか'
         );
     }
+
+    public function test_NGワードを後から変更できる()
+    {
+        $filter = new WordFilter('Arsenal');
+        $filter->updateNgWord('Arsenal', 'Celsea');
+
+        $this->assertSame(
+            't_wada: 昨日のArsenal vs <censored> 熱かった!',
+            $filter->censor('t_wada: 昨日のArsenal vs Celsea 熱かった!'),
+            '変更後のCelseaの文字を検閲できているか'
+        );
+    }
 }

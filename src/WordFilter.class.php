@@ -16,6 +16,20 @@ class WordFilter
     }
 
     /**
+     * 現在のNGワードを新しいNGワードに置き換える
+     * 戻り値は今の所何も使えない
+     */
+    public function updateNgWord($currentNgWord, $newNgWord)
+    {
+        $key = array_search($currentNgWord, $this->_ngWords);
+        if ($key === false) {
+            return;
+        }
+
+        $this->_ngWords[$key] = $newNgWord;
+    }
+
+    /**
      * 複数登録されたngWordのうち、1つでもあればtrue、1つもなければfalse
      */
     public function detect($text)
