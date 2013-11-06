@@ -73,4 +73,14 @@ class WordFilterTest extends PHPUnit_Framework_TestCase
             'ArsenalのとManUの文字を置換できているか'
         );
     }
+
+    public function test_NGワードに特殊文字が入っていても機能する()
+    {
+        $filter = new WordFilter('NG|W/ord');
+
+        $this->assertSame('t_wada: <censored> は検閲される',
+            $filter->censor('t_wada: NG|W/ord は検閲される'),
+            '特殊文字が入っていても正しく機能するか'
+        );
+    }
 }

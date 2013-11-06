@@ -7,12 +7,12 @@ class WordFilter
 
     public function __construct($ngWord)
     {
-        $this->_ngWords[] = $ngWord;
+        $this->_ngWords[] = $this->_escape($ngWord);
     }
 
     public function addNgWord($ngWord)
     {
-        $this->_ngWords[] = $ngWord;
+        $this->_ngWords[] = $this->_escape($ngWord);
     }
 
     /**
@@ -41,5 +41,13 @@ class WordFilter
 
         $joinedNgWords = implode('|', $this->_ngWords);
         return implode(self::REPLACE_STRING, preg_split("/$joinedNgWords/", $text));
+    }
+
+    /**
+     * censorで正規表現を使うため、ngWordsに特殊文字が入らないようにするためのmethod
+     */
+    protected function _escape($word)
+    {
+        return preg_quote($word, '/');
     }
 }
