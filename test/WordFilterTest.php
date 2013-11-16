@@ -74,6 +74,21 @@ class WordFilterTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function test_26ページ見てみたら複数NGワードの指定はconstructのタイミングで欲しいようなのでそれも可能にする()
+    {
+        $filter = new WordFilter('Arsenal', 'ManU');
+
+        $this->assertTrue(
+            $filter->detect('t_wada: 昨日のArsenal vs Celsea 熱かった!') && $filter->detect('t_wada: ManU vs Liverpool はそうでもなかった'),
+            'ArsenalとManUの文字をfilterできているか'
+        );
+        $this->assertSame(
+            't_wada: 昨日の<censored> vs <censored> 熱かった!',
+            $filter->censor('t_wada: 昨日のArsenal vs ManU 熱かった!'),
+            'ArsenalのとManUの文字を置換できているか'
+        );
+    }
+
     public function test_NGワードに特殊文字が入っていても機能する()
     {
         $filter = new WordFilter('NG|W/ord');

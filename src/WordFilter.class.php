@@ -5,9 +5,11 @@ class WordFilter
 
     protected $_ngWords = array();
 
-    public function __construct($ngWord)
+    public function __construct()
     {
-        $this->_ngWords[] = $this->_escape($ngWord);
+        foreach (func_get_args() as $ngWord) {
+            $this->_ngWords[] = $this->_escape($ngWord);
+        }
     }
 
     public function addNgWord($ngWord)
