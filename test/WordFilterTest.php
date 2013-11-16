@@ -110,4 +110,16 @@ class WordFilterTest extends PHPUnit_Framework_TestCase
             '変更後のCelseaの文字を検閲できているか'
         );
     }
+
+    public function test_censoredに変わる文字をセットすればその文字になる()
+    {
+        $filter = new WordFilter('Celsea');
+        $filter->setCensoredString('covered');
+
+        $this->assertSame(
+            't_wada: 昨日のArsenal vs <covered> 熱かった!',
+            $filter->censor('t_wada: 昨日のArsenal vs Celsea 熱かった!'),
+            'censoredではなくcoveredになっているか'
+        );
+    }
 }

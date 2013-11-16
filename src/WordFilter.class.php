@@ -1,9 +1,8 @@
 <?php
 class WordFilter
 {
-    const REPLACE_STRING = '<censored>';
-
     protected $_ngWords = array();
+    protected $_censoredString = 'censored';
 
     public function __construct()
     {
@@ -31,6 +30,11 @@ class WordFilter
         $this->_ngWords[$key] = $newNgWord;
     }
 
+    public function setCensoredString($string)
+    {
+        $this->_censoredString = $string;
+    }
+
     /**
      * 複数登録されたngWordのうち、1つでもあればtrue、1つもなければfalse
      */
@@ -56,7 +60,7 @@ class WordFilter
         }
 
         $joinedNgWords = implode('|', $this->_ngWords);
-        return implode(self::REPLACE_STRING, preg_split("/$joinedNgWords/", $text));
+        return implode("<$this->_censoredString>", preg_split("/$joinedNgWords/", $text));
     }
 
     /**
