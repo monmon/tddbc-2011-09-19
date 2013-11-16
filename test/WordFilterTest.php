@@ -122,4 +122,19 @@ class WordFilterTest extends PHPUnit_Framework_TestCase
             'censoredではなくcoveredになっているか'
         );
     }
+
+    public function test_名前がNGワードでも引っかからない()
+    {
+        $filter = new WordFilter('Arsenal');
+
+        $this->assertFalse(
+            $filter->detect('Arsenal: 昨日のCelsea 熱かった!'),
+            '名前のArsenalには引っかからないでいるか'
+        );
+        $this->assertSame(
+            'Arsenal: 昨日の<censored> vs ManU 熱かった!',
+            $filter->censor('Arsenal: 昨日のArsenal vs ManU 熱かった!'),
+            '名前のArsenalの文字は置換されずにいるか'
+        );
+    }
 }

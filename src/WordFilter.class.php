@@ -1,6 +1,8 @@
 <?php
 class WordFilter
 {
+    const DELIMITER = ': ';
+
     protected $_ngWords = array();
     protected $_censoredString = 'censored';
 
@@ -44,8 +46,9 @@ class WordFilter
             return false;
         }
 
+        list($name, $message) = $this->_splitText($text);
         foreach ($this->_ngWords as $ngWord) {
-            if (strpos($text, $ngWord) !== false) {
+            if (strpos($message, $ngWord) !== false) {
                 return true;
             }
         }
@@ -59,8 +62,11 @@ class WordFilter
             return $text;
         }
 
+        list($name, $message) = $this->_splitText($text);
         $joinedNgWords = implode('|', $this->_ngWords);
-        return implode("<$this->_censoredString>", preg_split("/$joinedNgWords/", $text));
+        $censoredMessage =  implode("<$this->_censoredString>", preg_split("/$joinedNgWords/", $message));
+
+        return $this->_createText($name, $censoredMessage);
     }
 
     /**
@@ -69,5 +75,24 @@ class WordFilter
     protected function _escape($word)
     {
         return preg_quote($word, '/');
+    }
+
+    /**
+     * 「ユーザ名DELIMITERメッセージ」というテキスト形式を「ユーザ名」と「メッセージ」に分割して返す
+     * @see _createText
+     */
+    protected function _splitText($text)
+    {
+        return explode(self::DELIMITER, $text);
+    }
+
+    /**
+     * 「ユーザ名」と「メッセージ」を「ユーザ名DELIMITERメッセージ」というテキスト形式にして返す
+     * _splitText の逆
+     * @see _splitText
+     */
+    protected function _createText($name, $message)
+    {
+        return implode(self::DELIMITER, array($name, $message));
     }
 }
