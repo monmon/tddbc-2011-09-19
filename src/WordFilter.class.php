@@ -83,7 +83,7 @@ class WordFilter
      */
     protected function _splitText($text)
     {
-        return explode(self::DELIMITER, $text);
+        return explode(self::DELIMITER, $text, 2);
     }
 
     /**

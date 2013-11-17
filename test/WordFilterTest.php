@@ -137,4 +137,15 @@ class WordFilterTest extends PHPUnit_Framework_TestCase
             '名前のArsenalの文字は置換されずにいるか'
         );
     }
+
+    public function test_名前とメッセージのdelimiterがメッセージに入っていても機能する()
+    {
+        $filter = new WordFilter('Arsenal');
+
+        $this->assertSame(
+            'Arsenal: 昨日の<censored> vs ManU : 熱かった!',
+            $filter->censor('Arsenal: 昨日のArsenal vs ManU : 熱かった!'),
+            ': がメッセージの途中にあっても問題ないか'
+        );
+    }
 }
