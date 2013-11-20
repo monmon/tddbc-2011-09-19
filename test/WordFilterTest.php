@@ -111,6 +111,18 @@ class WordFilterTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function test_同じNGワードを入力された場合でも、NGワードの変更時に「片方のNGワードだけ変更してしまった！！！」なんてことがない()
+    {
+        $filter = new WordFilter('Arsenal', 'Arsenal');
+        $filter->updateNgWord('Arsenal', 'Celsea');
+
+        $this->assertSame(
+            't_wada: 昨日のArsenal vs <censored> 熱かった!',
+            $filter->censor('t_wada: 昨日のArsenal vs Celsea 熱かった!'),
+            '変更後のCelseaの文字を検閲できているか'
+        );
+    }
+
     public function test_censoredに変わる文字をセットすればその文字になる()
     {
         $filter = new WordFilter('Celsea');

@@ -3,33 +3,25 @@ class WordFilter
 {
     const DELIMITER = ': ';
 
-    protected $_ngWords = array();
+    protected $_existsNgWord = array();  // array('ng_word1' => true, 'ng_word2' => true) のようなNGワード群
     protected $_censoredString = 'censored';
 
     public function __construct()
     {
         foreach (func_get_args() as $ngWord) {
-            $this->_ngWords[] = $this->_escape($ngWord);
+            $this->_existsNgWord[$this->_escape($ngWord)] = true;
         }
     }
 
     public function addNgWord($ngWord)
     {
-        $this->_ngWords[] = $this->_escape($ngWord);
+        $this->_existsNgWord[$this->_escape($ngWord)] = true;
     }
 
-    /**
-     * 現在のNGワードを新しいNGワードに置き換える
-     * 戻り値は今の所何も使えない
-     */
     public function updateNgWord($currentNgWord, $newNgWord)
     {
-        $key = array_search($currentNgWord, $this->_ngWords);
-        if ($key === false) {
-            return;
-        }
-
-        $this->_ngWords[$key] = $newNgWord;
+        unset($this->_existsNgWord[$currentNgWord]);
+        $this->_existsNgWord[$newNgWord] = 1;
     }
 
     public function setCensoredString($string)
@@ -42,12 +34,12 @@ class WordFilter
      */
     public function detect($text)
     {
-        if (empty($this->_ngWords)) {
+        if (empty($this->_existsNgWord)) {
             return false;
         }
 
         list($name, $message) = $this->_splitText($text);
-        foreach ($this->_ngWords as $ngWord) {
+        foreach (array_keys($this->_existsNgWord) as $ngWord) {
             if (strpos($message, $ngWord) !== false) {
                 return true;
             }
@@ -58,12 +50,12 @@ class WordFilter
 
     public function censor($text)
     {
-        if (empty($this->_ngWords)) {
+        if (empty($this->_existsNgWord)) {
             return $text;
         }
 
         list($name, $message) = $this->_splitText($text);
-        $joinedNgWords = implode('|', $this->_ngWords);
+        $joinedNgWords = implode('|', array_keys($this->_existsNgWord));
         $censoredMessage =  implode("<$this->_censoredString>", preg_split("/$joinedNgWords/", $message));
 
         return $this->_createText($name, $censoredMessage);
